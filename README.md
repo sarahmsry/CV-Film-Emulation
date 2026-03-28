@@ -2,25 +2,6 @@
 
 A computer vision project for emulating the characteristics of various film stocks in digital images.
 
-## Project Structure
-
-```
-├── data/                    # Data storage
-│   ├── film_samples/        # Reference film image samples
-│   │   ├── portra/          # Kodak Portra 400 film samples
-│   │   ├── velvia/          # Fujifilm Velvia film samples
-│   │   └── gold/            # Kodak Gold 200 film samples
-│   └── digital/             # Original digital images for processing
-├── src/                     # Source code
-│   ├── color_transfer.py    # Color transfer module
-│   ├── tone_curves.py       # Tone curve implementation
-│   ├── grain_synthesis.py   # Film grain synthesis
-│   └── utils.py             # Utility functions
-├── results/                 # Output results and processed images
-├── requirements.txt         # Project dependencies
-└── README.md               
-```
-
 ## Getting Started
 
 ### Installation
