@@ -2,7 +2,8 @@ import numpy as np
 from typing import List
 
 #from string.templatelib import convert
-from .utils import rgb_to_lab, lab_to_rgb, compute_image_stats
+from utils import rgb_to_lab, lab_to_rgb, compute_image_stats
+from pathlib import Path
 
 class ColorTransfer:
     """
@@ -14,7 +15,6 @@ class ColorTransfer:
     def __init__(self):
         self.target_mean = None  # stores mean color values in LAB space from film samples (average color)
         self.target_std = None   # stores standard deviation of colors in LAB space from film samples (variance of colors)
-
 
     def fit(self, film_samples: List[np.ndarray]):
         '''
@@ -36,9 +36,9 @@ class ColorTransfer:
         means = []
         stds = []
         for lab_img in lab_samples:
-            means, stds = compute_image_stats(lab_img) # compute mean and std for each color channel (L - lightness, A - greens and reds, B - blues and yellows)
-            means.append(means)
-            stds.append(stds)
+            mean, std = compute_image_stats(lab_img) # compute mean and std for each color channel (L - lightness, A - greens and reds, B - blues and yellows)
+            means.append(mean)
+            stds.append(std)
 
         # takes the average of all of the means and std's across all images for the film stock
         # to give ONE target mean and std representing each film stock.
