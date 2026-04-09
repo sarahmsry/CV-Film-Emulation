@@ -6,13 +6,13 @@ from typing import List
 import os
 from pathlib import Path
 
-from .color_transfer import ColorTransfer
-from .tone_curves import ToneCurves
-from .grain_synthesis import GrainSynthesis
-from .utils import load_image, save_image, load_dataset
-import color_transfer
+from color_transfer import ColorTransfer
+from tone_curves import ToneCurves
+from grain_synthesis import GrainSynthesis
+from utils import load_image, save_image, load_dataset
 
-class FilmEmulationPipleline:
+
+class FilmEmulationPipeline:
     def __init__(self, film_name: str):
         '''
         Input: 
