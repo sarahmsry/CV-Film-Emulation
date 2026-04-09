@@ -12,7 +12,13 @@ class ToneCurves:
     """
 
     def __init__(self):
-        self.curve_params = None
+        self.curve_params = {
+            'type': None, 
+            'midpoint': None, 
+            'steepness': None, 
+            'max_val': None
+        }
+        self.is_trained = False
 
     @staticmethod
     def sigmoid_curve(x, midpoint, steepness, max_val):
@@ -84,12 +90,11 @@ class ToneCurves:
             # curve_fit returns optimal parameters for the sigmoid curve (midpoint, steepness, max_val) 
             # curve_fit also returns covariance matrix, which can be ignored in this case
             params, _ = curve_fit(self.sigmoid_curve, x_data, cumsum_normalized, p0 = [128, 0.05, 255], maxfev=20000) 
-            self.curve_params = {
-                'type': 'sigmoid', 
-                'midpoint': params[0],
-                'steepness': params[1],     
-                'max_val': params[2]
-            }
+            self.curve_params['type'] = 'sigmoid'
+            self.curve_params['midpoint'] = params[0]
+            self.curve_params['steepness'] = params[1]
+            self.curve_params['max_val'] = params[2]
+
         except:
             # fallback incase sigmoid fitting fails (due to lack of contrast or other issues with histogram shape)
             print("Sigmoid fit failed, using gamma curve")
@@ -98,6 +103,7 @@ class ToneCurves:
                 'gamma': 1.2 # default gamma value for fallback 
             }
 
+        self.is_trained = True
         print(f"Extracted curve parameters: {self.curve_params}")
 
 
@@ -112,7 +118,7 @@ class ToneCurves:
         Return: 
             image with tone curve applied to mimic film contrast characteristics
         '''
-        if self.curve_params is None:
+        if not self.is_trained:
             raise ValueError("Must call analyze_film_contrast() first to learn curve parameters")
         
         lut = np.arange(256, dtype=np.float32) # create lookup table for pixel values 0-255 (using array for vectorization purposes)
@@ -146,7 +152,7 @@ class ToneCurves:
         Return:
             None (displays plot)
         '''
-        if self.curve_params is None:
+        if not self.is_trained:
             return("No curve to visualize; must call analyze_film_contrast() to learn curve parameters")
         
         x = np.arange(256)
@@ -172,3 +178,40 @@ class ToneCurves:
         plt.savefig(full_path)
         plt.show()
     
+    def save_stats(self, filepath: str):
+        '''save learned contrast stats to avoid re-fitting; can load later to apply tone curves'''
+        if not self.is_trained:
+            raise ValueError("No curve parameters to save; must call analyze_film_contrast() first")
+        
+        save_params = {}
+        for key, value in self.curve_params.items():
+            if value is not None:
+                save_params[key] = value
+
+        np.savez(filepath, **save_params)
+        print(f"Saved contrast stats to {filepath}")
+
+    def load_stats(self, filepath: str):
+        '''Load learned curve parameters'''
+        data = np.load(filepath)
+        
+        # Check curve type first
+        curve_type = str(data['type'])
+        
+        if curve_type == 'sigmoid':
+            self.curve_params = {
+                'type': 'sigmoid',
+                'midpoint': float(data['midpoint']),
+                'steepness': float(data['steepness']),
+                'max_val': float(data['max_val'])
+            }
+        elif curve_type == 'gamma':
+            self.curve_params = {
+                'type': 'gamma',
+                'gamma': float(data['gamma'])
+            }
+        else:
+            raise ValueError(f"Unknown curve type: {curve_type}")
+        
+        self.is_trained = True
+        print(f"Loaded tone curve parameters from {filepath}")
