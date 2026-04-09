@@ -138,9 +138,9 @@ class GrainSynthesis:
         Returns:
             Original image with grain applied in RGB format 
         """
-        if not self.learned:
+        if not self.film_stats:
             print("Warning: No film grain characteristics learned, so using default grain values.")
-            
+
         if strength == 0:
             return image # if strength is 0, return original image without grain
         
@@ -156,3 +156,16 @@ class GrainSynthesis:
             img_float[:,:,c] = img_float[:,:,c] + grain_channel
             result = np.clip(img_float, 0, 255).astype(np.uint8) # clip to valid pixel range (0-255) and convert back to uint8 for image format 
             return result
+
+    def save_stats(self, filepath: str):
+        '''save learned grain stats to avoid re-fitting; can load later to apply grain synthesis'''
+        np.savez(filepath, intensity=self.intensity, size=self.size, film_stats=self.film_stats)
+        print(f"Saved grain stats to {filepath}")
+
+    def load_stats(self, filepath: str):
+        '''load previously saved grain stats to apply grain synthesis without refitting'''
+        data = np.load(filepath)
+        self.intensity = float(data['intensity'])
+        self.size = float(data['size'])
+        self.film_stats = bool(data['film_stats']) 
+        print(f"Loaded grain stats from {filepath}")
