@@ -5,10 +5,9 @@ import cv2
 
 class GrainSynthesis:
     """
-    Synthesizes and applies film grain using frequency-domain analysis and 
+    Analyzes and applies film grain using frequency-domain analysis and 
     luminance-dependent grain patterns. This class generates grain that mimics 
-    the characteristics of real film grain, including size, intensity, and 
-    distribution based on image luminance.
+    the real film grain, including size, intensity, and distribution based on image luminance (brightness).
     """
     
     # initialize with default grain parameters
@@ -16,8 +15,7 @@ class GrainSynthesis:
         """
         Args:
             intensity: Grain intensity (default 0.1, increase for stronger grain)
-            size: Grain size multiplier (default 0.5 for fine grain clumps, increase 
-            for coarser clumps)
+            size: Grain size multiplier (default 0.5 for fine grain clumps, increase for coarser clumpss)
         """
         self.intensity = intensity
         self.size = size
@@ -113,7 +111,7 @@ class GrainSynthesis:
             luminance: Optional luminance map for luminance-dependent grain
 
         Returns:
-            Grain pattern
+            Array of grain values 
         """
 
         h, w = shape[:2]
@@ -129,18 +127,23 @@ class GrainSynthesis:
             grain = grain * grain_mask # apply mask to grain to create luminance-dependent grain pattern
         return grain
 
-    def apply_grain(self, image: np.ndarray) -> np.ndarray:
+    def apply_grain(self, image: np.ndarray, strength: float = 1.0) -> np.ndarray:
         """
         Apply grain to an image
 
-        Args:
-            Image in RGB format
+        Input:
+            Image: Input digital image in RGB format
+            Strength: How strongly to apply the grain (0-2); 2 = double grain, 1 = normal grain (learned intensity), 0 = no grain
 
         Returns:
-            Image with grain applied
+            Original image with grain applied in RGB format 
         """
         if not self.learned:
             print("Warning: No film grain characteristics learned, so using default grain values.")
+            
+        if strength == 0:
+            return image # if strength is 0, return original image without grain
+        
         img_float = image.astype(np.float32) # convert to float for processing (allows negative values for grain application)
         luminance = np.mean(img_float, axis = 2) # compute luminance for each pixel (average of RGB channels) to create luminance map for luminance-dependent grain
 
@@ -149,7 +152,7 @@ class GrainSynthesis:
 
         # apply grain to each color channel (RGB = 0,1,2) by adding the grain pattern multiplied by the intensity parameter (which controls overall strength of the grain effect)
         for c in range(3):
-            grain_channel = grain * self.intensity * 255
+            grain_channel = grain * self.intensity * strength * 255
             img_float[:,:,c] = img_float[:,:,c] + grain_channel
             result = np.clip(img_float, 0, 255).astype(np.uint8) # clip to valid pixel range (0-255) and convert back to uint8 for image format 
             return result
