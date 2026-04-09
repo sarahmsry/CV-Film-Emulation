@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
+import os
 
 class ToneCurves:
     """Extracts and applies characteristic tone curves from film samples. 
@@ -82,7 +83,7 @@ class ToneCurves:
             # maxfev set to 1k iterations; will resort to gamma curve if sigmoid fit fails after 1k iterations
             # curve_fit returns optimal parameters for the sigmoid curve (midpoint, steepness, max_val) 
             # curve_fit also returns covariance matrix, which can be ignored in this case
-            params, _ = curve_fit(self.sigmoid_curve, x_data, cumsum_normalized, p0 = [128, 0.05, 255], maxfev=10000) 
+            params, _ = curve_fit(self.sigmoid_curve, x_data, cumsum_normalized, p0 = [128, 0.05, 255], maxfev=20000) 
             self.curve_params = {
                 'type': 'sigmoid', 
                 'midpoint': params[0],
@@ -155,6 +156,11 @@ class ToneCurves:
         else:
             y = self.gamma_curve(x, self.curve_params['gamma'])
             
+        file_name = 'tone_curve_visualization.png'
+        file_dir = 'results'
+        full_path = os.path.join(file_dir, file_name)
+
+
         plt.figure(figsize=(8, 6))
         plt.plot(x, x, 'r--', label='Linear (Original)', alpha=0.5)
         plt.plot(x, y, 'b-', label='Film Curve', linewidth=2)
@@ -163,5 +169,6 @@ class ToneCurves:
         plt.title('Tone Curve')
         plt.legend()
         plt.grid(True, alpha=0.3)
+        plt.savefig(full_path)
         plt.show()
     
