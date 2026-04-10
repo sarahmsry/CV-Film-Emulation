@@ -1,62 +1,74 @@
-### Demo script for testing on a sample digital image
-
 import sys
 sys.path.append('src')
 
-from utils import load_image, save_image, show_comparison
-from color_transfer import ColorTransfer
-from grain_synthesis import GrainSynthesis
+from integration import FilmEmulationPipeline
+from utils import load_image, load_dataset
 import matplotlib.pyplot as plt
+import numpy as np
 
 def main():
-    # print("=== Film Emulation Test ===\n")
+    # Load trained model
+    print("1. Loading Portra 400 model...")
+    pipeline = FilmEmulationPipeline('portra_400')
+    pipeline.load_model('results/models/portra400_model/')  # adjust path as needed
     
-    # print("Loading test image...")
-    # try:
-    #     img = load_image("data/digital/digitaltest1.jpg")
-    # except:
-    #     print("No test image found.")
-    #     return
+    # Load test image
+    print("2. Loading test image...")
+    digital_img = load_image("data/digital_samples/digital3.jpg")
     
-    # print(f"Image shape: {img.shape}\n")
+    # Apply full emulation
+    print("3. Applying film emulation...")
+    result = pipeline.transform(digital_img)
     
-    # # Apply grain
-    # print("Applying film grain...")
-    # grain_synth = GrainSynthesis(intensity=0.1, size=1)
-    # img_with_grain = grain_synth.apply_grain(img)
+    # Create comparison visualization
+    print("4. Creating visualization for before and after comparison...\n")
     
-    # # Show results
-    # show_comparison(img, img_with_grain, "Original", "With Film Grain")
+    fig, axes = plt.subplots(2, 3, figsize=(16, 10))
+    fig.subplots_adjust(hspace=0.3, wspace=0.3)  # Add spacing between subplots
     
-    # print("\n Demo complete!")
-
-    # Create instance
-    grain_synth = GrainSynthesis()
-
-    print("=== Film Grain Analysis Demo ===\n")
+    # Original
+    axes[0, 0].imshow(digital_img)
+    axes[0, 0].set_title('Original Digital', fontsize=11, fontweight='bold')
+    axes[0, 0].axis('off')
     
-    # Analyze your film samples (e.g., from portra folder)
-    print("Step 1: Analyze film samples")
-    grain_synth.load_and_analyze_film_samples("data/film_samples/portra")
+    # Color only
+    color_only = pipeline.color_transfer.transform(digital_img)
+    axes[0, 1].imshow(color_only)
+    axes[0, 1].set_title('+ Color Transfer', fontsize=11)
+    axes[0, 1].axis('off')
     
-    # Load a digital image to apply learned grain to
-    print("\nStep 2: Loading digital image")
-    try:
-        digital_image = load_image("data/digital/digitaltest1.jpg")
-        print(f"Image loaded: {digital_image.shape}")
-    except:
-        print("No test image found. Creating synthetic test image...")
-        import numpy as np
-        digital_image = np.random.randint(0, 255, (512, 512, 3), dtype=np.uint8)
+    # Color + Curves
+    color_curve = pipeline.tone_curves.analyze_curve(color_only)
+    axes[0, 2].imshow(color_curve)
+    axes[0, 2].set_title('+ Tone Curves', fontsize=11)
+    axes[0, 2].axis('off')
     
-    # Apply the learned grain to the digital image
-    print("\nStep 3: Applying learned film grain...")
-    result = grain_synth.apply_film_grain(digital_image)
+    # Color + Curves + Grain (full)
+    axes[1, 0].imshow(result)
+    axes[1, 0].set_title('+ Grain (FINAL)', fontsize=11, fontweight='bold')
+    axes[1, 0].axis('off')
     
-    # Show comparison
-    show_comparison(digital_image, result, "Original Digital", "With Film Grain")
+    # Show parameters
+    params_text = f"Portra 400 Parameters:\n\n"
+    params_text += f"Color: LAB mean={np.round(pipeline.color_transfer.target_mean, 2)}\n"
+    params_text += f"Tone: {pipeline.tone_curves.curve_params['type']}\n"
+    params_text += f"Grain: intensity={pipeline.grain_synthesis.intensity:.3f}\n"
+    params_text += f"         size={pipeline.grain_synthesis.size:.2f}"
     
-    print("\n✓ Demo complete!")
+    axes[1, 1].text(0.05, 0.5, params_text, fontsize=9, family='monospace', 
+                   verticalalignment='center', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+    axes[1, 1].axis('off')
+    
+    # final comparison
+    axes[1, 2].imshow(np.hstack([digital_img, result]))
+    axes[1, 2].set_title('Before | After', fontsize=12, fontweight='bold')
+    axes[1, 2].axis('off')
+    
+    plt.suptitle('Film Emulation Pipeline - Kodak Portra 400', fontsize=14, fontweight='bold', y=0.98)
+    plt.savefig('results/demo_output.jpg', dpi=150, bbox_inches='tight')
+    plt.show()
+    
+    print("Demo complete; saved to results/demo_output.jpg")
 
 if __name__ == "__main__":
     main()

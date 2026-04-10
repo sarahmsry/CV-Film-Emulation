@@ -1,5 +1,6 @@
 """
-Utility functions for loading, saving, and processing images, as well as displaying comparisons and computing statistics.
+Utility functions for loading, saving, and processing images, as well as displaying 
+comparisons and computing statistics. Used across multiple modules for consistent and efficient image handling.
 """
 
 import cv2
@@ -68,17 +69,25 @@ def rgb_to_lab(img: np.ndarray) -> np.ndarray:
 
 def lab_to_rgb(img: np.ndarray) -> np.ndarray:
     """Convert LAB to RGB color space"""
-    img_lab_uint8 = np.clip(img, 0, 255).astype(np.uint8)
+    img_lab_uint8 = np.clip(img, 0, 255).astype(np.uint8)  # cv2 needs uint8 input
     img_bgr = cv2.cvtColor(img_lab_uint8, cv2.COLOR_LAB2BGR)
     img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-    return img_rgb
+    return np.clip(img_rgb, 0, 255).astype(np.uint8)
 
 
 def compute_image_stats(img: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-    """Compute mean and standard deviation for each channel"""
-    mean = np.mean(img, axis=(0, 1))
-    std = np.std(img, axis=(0, 1))
-    return mean, std
+   ''' 
+   computes the mean and std across the height and width dimensions for each channel,
+   resulting in a mean and std for each color channel (L, A, B).
+    Input:
+         img: input image in LAB color space as a numpy array with shape (Height, Width, 3 channels)    
+    Returns:
+         mean: mean color values for each channel (L, A, B)
+         std: standard deviation for each channel (L, A, B)
+   '''
+   mean = np.mean(img, axis=(0, 1))
+   std = np.std(img, axis=(0, 1))
+   return mean, std
 
 
 def normalize_image(img: np.ndarray) -> np.ndarray:
