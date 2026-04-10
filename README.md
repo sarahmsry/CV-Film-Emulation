@@ -32,7 +32,6 @@ All dependencies are automatically installed via `pip install -r requirements.tx
 - **scipy** (>=1.5.0) - Scientific computing and optimization
 - **pillow** (>=8.0.0) - Image I/O and manipulation
 - **matplotlib** (>=3.3.0) - Visualization and plotting
-- **jupyter** (>=1.0.0) - Interactive notebooks (optional)
 
 
 ## Installation
@@ -60,15 +59,6 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-
-**Dependencies include:**
-- numpy (>=1.20.0) - Numerical computations
-- opencv-python (>=4.5.0) - Image processing
-- pillow (>=8.0.0) - Image I/O
-- scikit-image (>=0.18.0) - Image algorithms
-- matplotlib (>=3.3.0) - Visualization
-- scipy (>=1.5.0) - Scientific computing
-- jupyter (>=1.0.0) - Interactive notebooks
 
 ## Project Structure
 
