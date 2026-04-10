@@ -13,11 +13,11 @@ class GrainSynthesis:
     """
     
     # initialize with default grain parameters
-    def __init__(self, intensity: float = 0.1, size: float = 0.5):
+    def __init__(self, intensity: float = 0.1, size: float = 0.2):
         """
         Args:
             intensity: Grain intensity (default 0.1, increase for stronger grain)
-            size: Grain size multiplier (default 0.5 for fine grain clumps, increase for coarser clumps)
+            size: Grain size multiplier (default 0.2 for fine grain clumps, increase for coarser clumps)
         """
         self.intensity = intensity
         self.size = size
