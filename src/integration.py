@@ -58,7 +58,7 @@ class FilmEmulationPipeline:
 
     def transform(self, image: np.ndarray, color_strength: float = 1.0, curve_strength: float = 1.0, grain_strength: float = 1.0) -> np.ndarray:
         '''
-        Apple film emulation to a digital image by applying the transformations from each module (color transfer, 
+        Apply film emulation to a digital image by applying the transformations from each module (color transfer, 
         tone curves, grain synthesis). Strength parameters allow for intensity adjustments
 
         Input:
@@ -130,5 +130,6 @@ class FilmEmulationPipeline:
         self.tone_curves.load_stats(f"{directory}/tone_curve_params.npz")
         self.grain_synthesis.load_stats(f"{directory}/grain_synthesis_params.npz")
 
+        self.is_trained = True  # Mark pipeline as trained after loading model files
         print(f"Loaded {self.film_name} model from {directory}")
    
