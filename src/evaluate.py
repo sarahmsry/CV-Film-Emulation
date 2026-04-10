@@ -3,8 +3,7 @@ sys.path.append('src')
 import cv2
 import numpy as np
 from integration import FilmEmulationPipeline
-from utils import load_image, load_dataset, save_image
-from PIL import Image
+from utils import load_dataset, save_image
 
 pipeline = FilmEmulationPipeline('portra_400')
 pipeline.load_model('results/models/portra400_model/')  # adjust path as needed
