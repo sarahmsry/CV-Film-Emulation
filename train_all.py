@@ -1,4 +1,5 @@
 import sys 
+sys.path.append('src')
 import numpy as np
 from utils import load_dataset
 from integration import FilmEmulationPipeline
