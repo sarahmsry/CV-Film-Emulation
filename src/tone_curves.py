@@ -74,6 +74,7 @@ class ToneCurves:
         for lum in luminance_samples:
             # compute histogram for each image luminance and sum to get overall luminance for film stock
             hist, _ = np.histogram(lum.flatten(), bins = 256, range=(0, 255))
+            hist = hist / np.sum(hist) # normalize histogram to get distribution of luminance values for the film stock (sum of all bins will equal 1)
             hist_sum += hist # sum histograms across all film samples to get overall luminance distribution for the film stock 
 
         avg_hist = hist_sum / len(luminance_samples) # average histogram across all film samples to get distribution of luminance values for the film stock 
@@ -153,7 +154,7 @@ class ToneCurves:
             None (displays plot)
         '''
         if not self.is_trained:
-            return("No curve to visualize; must call analyze_film_contrast() to learn curve parameters")
+            print("No curve to visualize; must call analyze_film_contrast() to learn curve parameters")
         
         x = np.arange(256)
         # 
