@@ -71,6 +71,7 @@ CV-Film-Emulation/
 ├── train_all.py              # Training script for all film stocks
 ├── test_and_validation.py    # Unit tests for the pipeline
 ├── evaluate.py               # Evaluation utilities
+├── visualize_tone_curves.py  # Tone curve visualization tool
 ├── src/                      # Source code directory
 │   ├── utils.py             # Utility functions (image I/O, color conversions)
 │   ├── color_transfer.py    # Color transfer module
