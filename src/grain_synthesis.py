@@ -123,7 +123,7 @@ class GrainSynthesis:
 
         h, w = shape[:2]
         grain = np.random.normal(0,1,(h,w)) # generate base noise with normal distribution (mean=0, std=1)
-        sigma = self.size # use learned grain size to set blur amount (higher sigma = more blurring = coarser grain and vice versa)
+        sigma = self.size 
         grain = gaussian_filter(grain, sigma=sigma) # blur noise to create grain "clumps" (higher sigma = more blurring = coarser grain)
         grain = grain - grain.mean() # center at zero (mean can be slightly off due to randomness, so subtract it to ensure grain is zero-centered)
         grain = grain / grain.std() + 1e-8 # normalize to unit standard deviation (add small epsilon to avoid division by zero)
