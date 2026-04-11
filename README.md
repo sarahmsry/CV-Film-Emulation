@@ -300,8 +300,7 @@ Processed images and model results are saved in the `results/` directory. The di
 ## Future Enhancements
 
 - [ ] Support for additional film stocks
-- [ ] GPU acceleration for faster processing
 - [ ] Batch processing for multiple images
 - [ ] Web-based interface
-- [ ] Real-time video processing
+
 
