@@ -7,7 +7,7 @@ from utils import lab_to_rgb, rgb_to_lab
 
 class GrainSynthesis:
     """
-    Analyzes and applies film grain using frequency-domain analysis and 
+    Analyzes and applies film grain using fast fourier transform (FFT) and 
     luminance-dependent grain patterns. This class generates grain that mimics 
     the real film grain, including size, intensity, and distribution based on image luminance (brightness).
     """

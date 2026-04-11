@@ -151,10 +151,11 @@ class ToneCurves:
             film_samples: list of film images in RGB format
 
         Return:
-            None (displays plot)
+            None (displays plot and saves to results/)
         '''
         if not self.is_trained:
             print("No curve to visualize; must call analyze_film_contrast() to learn curve parameters")
+            return
         
         x = np.arange(256)
         # 
@@ -165,8 +166,8 @@ class ToneCurves:
             
         file_name = 'tone_curve_visualization.png'
         file_dir = 'results'
+        os.makedirs(file_dir, exist_ok=True)  # Create results directory if it doesn't exist
         full_path = os.path.join(file_dir, file_name)
-
 
         plt.figure(figsize=(8, 6))
         plt.plot(x, x, 'r--', label='Linear (Original)', alpha=0.5)
@@ -177,6 +178,7 @@ class ToneCurves:
         plt.legend()
         plt.grid(True, alpha=0.3)
         plt.savefig(full_path)
+        print(f"Saved tone curve visualization to {full_path}")
         plt.show()
     
     def save_stats(self, filepath: str):
@@ -216,3 +218,4 @@ class ToneCurves:
         
         self.is_trained = True
         print(f"Loaded tone curve parameters from {filepath}")
+
