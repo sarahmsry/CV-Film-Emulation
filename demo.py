@@ -14,7 +14,7 @@ def main():
     
     # Load test image
     print("2. Loading test image...")
-    digital_img = load_image("data/digital_samples/digital3.jpg")
+    digital_img = load_image("data/digital_samples/digital8.jpg")
     
     # Apply full emulation
     print("3. Applying film emulation...")

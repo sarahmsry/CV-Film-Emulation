@@ -66,6 +66,7 @@ pip install -r requirements.txt
 CV-Film-Emulation/
 ├── README.md                 # This file
 ├── requirements.txt          # Python dependencies
+├── test_and_validation.py    # Unit tests for the pipeline
 ├── src/                      # Source code directory
 │   ├── utils.py             # Utility functions (image I/O, color conversions)
 │   ├── color_transfer.py    # Color transfer module
@@ -259,6 +260,56 @@ data/film_samples/
 
 Processed images and model results are saved in the `results/` directory. The directory is created automatically if it doesn't exist.
 
+## Testing
+
+### Running Automated Tests
+
+A comprehensive test suite is provided to validate the pipeline functionality:
+
+```bash
+python test_and_validation.py
+```
+
+**Tests included:**
+
+1. **Training Test** - Validates that the pipeline can train on film samples
+   - Loads 10 film samples from `data/film_samples/portra_400/`
+   - Trains all three modules (color transfer, tone curves, grain synthesis)
+   - Verifies learned parameters are not None
+
+2. **Transformation Test** - Validates that trained models can process images
+   - Creates a synthetic test image
+   - Loads pre-trained Portra 400 model
+   - Applies film emulation transformation
+   - Verifies output shape, data type, and value range (0-255)
+
+3. **Save/Load Test** - Validates model persistence
+   - Trains a model on 5 samples from `data/film_samples/kodak portra 400/`
+   - Saves trained parameters to disk
+   - Loads parameters back
+   - Verifies loaded and saved parameters match
+
+**Expected Output:**
+```
+Testing training...
+Training test passed
+Testing transformation...
+Transformation test passed
+Testing save/load...
+Save/load test passed
+
+✓ ALL TESTS PASSED!
+```
+
+### What Tests Verify
+
+- ✓ Pipeline can successfully train on real film samples
+- ✓ Color transfer statistics are learned correctly
+- ✓ Tone curve parameters are extracted
+- ✓ Grain characteristics are analyzed
+- ✓ Film emulation produces valid output images
+- ✓ Learned model parameters can be saved and loaded without loss of data
+
 ## Presentation Guide
 
 ### For Live Demonstrations
@@ -287,6 +338,7 @@ Processed images and model results are saved in the `results/` directory. The di
 
 ### Pre-Presentation Checklist
 
+- [ ] Run tests to verify everything works: `python test_and_validation.py` (should see "✓ ALL TESTS PASSED!")
 - [ ] Verify all dependencies installed: `pip list | grep -E "numpy|opencv|scipy|pillow|matplotlib"`
 - [ ] Test `python src/demo.py` runs successfully
 - [ ] Check that `results/models/` contains all three trained models
