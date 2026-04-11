@@ -66,16 +66,17 @@ pip install -r requirements.txt
 CV-Film-Emulation/
 ├── README.md                 # This file
 ├── requirements.txt          # Python dependencies
+├── apply_emulation.py        # Apply trained models to images (CLI tool)
+├── demo.py                   # Demo/visualization script
+├── train_all.py              # Training script for all film stocks
 ├── test_and_validation.py    # Unit tests for the pipeline
+├── evaluate.py               # Evaluation utilities
 ├── src/                      # Source code directory
 │   ├── utils.py             # Utility functions (image I/O, color conversions)
 │   ├── color_transfer.py    # Color transfer module
 │   ├── tone_curves.py       # Tone curve analysis and application
 │   ├── grain_synthesis.py   # Film grain synthesis
 │   ├── integration.py       # Main pipeline integration
-│   ├── train_all.py         # Training script for all film stocks
-│   ├── demo.py              # Demo/testing script
-│   ├── apply_emulation.py   # Apply trained models to images
 │   └── test.py              # Additional testing utilities
 ├── data/                     # Data directory
 │   ├── digital_samples/     # Digital test images
@@ -100,7 +101,7 @@ The demo script provides a complete visualization of the film emulation pipeline
 
 ```bash
 # From the project root directory
-python src/demo.py
+python demo.py
 ```
 
 **What the demo does:**
@@ -121,7 +122,7 @@ python src/demo.py
 To retrain models on film samples:
 
 ```bash
-python src/train_all.py
+python train_all.py
 ```
 
 This trains all three film stock models and saves them to `results/models/`:
@@ -139,35 +140,35 @@ Each model directory contains:
 Use the CLI tool to apply film emulation to any digital image with custom effect strengths:
 
 ```bash
-python src/apply_emulation.py --film MODEL_NAME --input INPUT_PATH --output OUTPUT_PATH [OPTIONS]
+python apply_emulation.py --film MODEL_NAME --input INPUT_PATH --output OUTPUT_PATH [OPTIONS]
 ```
 
 #### Examples
 
 **Basic usage (default parameters):**
 ```bash
-python src/apply_emulation.py --film "portra400_model" --input "data/digital_samples/your_image.jpg"
+python apply_emulation.py --film "portra400_model" --input "data/digital_samples/your_image.jpg"
 ```
 Output will be saved to `results/output.jpg`
 
 **With custom output path:**
 ```bash
-python src/apply_emulation.py --film "gold200_model" --input "data/digital_samples/test.jpg" --output "results/my_result.jpg"
+python apply_emulation.py --film "gold200_model" --input "data/digital_samples/test.jpg" --output "results/my_result.jpg"
 ```
 
 **Fine-tuned effects (50% strength on each effect):**
 ```bash
-python src/apply_emulation.py --film "velvia50_model" --input "data/digital_samples/photo.jpg" --output "results/subtle.jpg" --color 0.5 --curve 0.5 --grain 0.5
+python apply_emulation.py --film "velvia50_model" --input "data/digital_samples/photo.jpg" --output "results/subtle.jpg" --color 0.5 --curve 0.5 --grain 0.5
 ```
 
 **Extra strong grain (Portra 400 with double grain, full color/curve):**
 ```bash
-python src/apply_emulation.py --film "portra400_model" --input "data/digital_samples/photo.jpg" --output "results/grainy.jpg" --grain 2.0 --color 1.0 --curve 1.0
+python apply_emulation.py --film "portra400_model" --input "data/digital_samples/photo.jpg" --output "results/grainy.jpg" --grain 2.0 --color 1.0 --curve 1.0
 ```
 
 **No grain, full color and tone curves:**
 ```bash
-python src/apply_emulation.py --film "gold200_model" --input "data/digital_samples/photo.jpg" --output "results/clean.jpg" --grain 0.0 --color 1.0 --curve 1.0
+python apply_emulation.py --film "gold200_model" --input "data/digital_samples/photo.jpg" --output "results/clean.jpg" --grain 0.0 --color 1.0 --curve 1.0
 ```
 
 #### CLI Parameters
@@ -252,7 +253,7 @@ data/film_samples/
 - Reduce effect strengths: `--color 0.7 --curve 0.7 --grain 0.5`
 - Disable individual effects where needed:
   ```bash
-  python src/apply_emulation.py --film "portra400_model" --input "image.jpg" --grain 0.0  # Color + tone curves only
+  python apply_emulation.py --film "portra400_model" --input "image.jpg" --grain 0.0  # Color + tone curves only
   ```
 - Try different film model that may match your image better
 
@@ -318,7 +319,7 @@ Save/load test passed
 1. **Pre-run the demo** before your presentation to ensure all models are trained and files are present
 2. **Run demo.py** to show the complete pipeline with visualization:
    ```bash
-   python src/demo.py
+   python demo.py
    ```
    This generates a professional-looking comparison visualization in `results/demo_output.jpg`
 
@@ -333,14 +334,14 @@ Save/load test passed
 
 5. **Live CLI demo** (optional):
    ```bash
-   python src/apply_emulation.py --film "gold200_model" --input "data/digital_samples/your_image.jpg" --output "results/demo_live.jpg" --color 1.0 --curve 1.0 --grain 0.5
+   python apply_emulation.py --film "gold200_model" --input "data/digital_samples/your_image.jpg" --output "results/demo_live.jpg" --color 1.0 --curve 1.0 --grain 0.5
    ```
 
 ### Pre-Presentation Checklist
 
 - [ ] Run tests to verify everything works: `python test_and_validation.py` (should see "✓ ALL TESTS PASSED!")
 - [ ] Verify all dependencies installed: `pip list | grep -E "numpy|opencv|scipy|pillow|matplotlib"`
-- [ ] Test `python src/demo.py` runs successfully
+- [ ] Test `python demo.py` runs successfully
 - [ ] Check that `results/models/` contains all three trained models
 - [ ] Have sample images ready in `data/digital_samples/`
 - [ ] Pre-generate some example outputs to have as backup visuals
